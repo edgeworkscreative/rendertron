@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import puppeteer, { ScreenshotOptions } from 'puppeteer';
 import url from 'url';
 import { dirname } from 'path';
@@ -219,7 +220,7 @@ export class Renderer {
     // Remove script & import tags.
     await page.evaluate(stripPage);
     // Inject <base> tag with the origin of the request (ie. no path).
-    const parsedUrl = url.parse(requestUrl);
+    const parsedUrl = url.parse(requestUrl.replace(':/', '://'));
     await page.evaluate(
       injectBaseHref,
       `${parsedUrl.protocol}//${parsedUrl.host}`,
@@ -227,7 +228,11 @@ export class Renderer {
     );
 
     // Serialize page.
-    const result = (await page.content()) as string;
+    const result = (await page.$eval('html', (element) => {
+      const html = (element as any).getInnerHTML({ includeShadowRoots: true });
+      element.innerHTML = html;
+      return element.outerHTML;
+    })) as string;
 
     await page.close();
     if (this.config.closeBrowser) {

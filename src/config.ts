@@ -52,13 +52,16 @@ export class ConfigManager {
     timeout: 10000,
     port: '3000',
     host: '0.0.0.0',
-    width: 1000,
+    width: 1800,
     height: 1000,
     reqHeaders: {},
     headers: {},
-    puppeteerArgs: ['--no-sandbox'],
+    puppeteerArgs: [
+      '--no-sandbox',
+      '--enable-experimental-web-platform-features'
+    ],
     renderOnly: [],
-    closeBrowser: false,
+    closeBrowser: true,
     restrictedUrlPattern: null
   };
 
